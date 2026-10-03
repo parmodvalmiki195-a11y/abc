@@ -1,7 +1,17 @@
 const mongoose = require('mongoose')
 const dns = require('dns')
 
+let connectionPromise
+
 async function connectDB() {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection
+  }
+
+  if (connectionPromise) {
+    return connectionPromise
+  }
+
   const mongoUri = process.env.MONGO_URI || process.env.ATLAS_URI
 
   if (!mongoUri) {
@@ -22,8 +32,16 @@ async function connectDB() {
     )
   }
 
-  await mongoose.connect(mongoUri)
-  console.log('MongoDB connected')
+  connectionPromise = mongoose.connect(mongoUri)
+
+  try {
+    await connectionPromise
+    console.log('MongoDB connected')
+    return mongoose.connection
+  } catch (error) {
+    connectionPromise = null
+    throw error
+  }
 }
 
 module.exports = connectDB
