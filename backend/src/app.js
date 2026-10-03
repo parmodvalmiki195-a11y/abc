@@ -28,6 +28,10 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
 ]
+app.use((req, res, next) => {
+  console.log('Request Origin:', req.headers.origin)
+  next()
+})
 
 app.use(
   cors({
