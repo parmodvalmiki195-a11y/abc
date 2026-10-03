@@ -1,24 +1,20 @@
 const cors = require('cors')
 const express = require('express')
-
 const authRoutes = require('./routes/authRoutes')
 const couponRoutes = require('./routes/couponRoutes')
 const drawRoutes = require('./routes/drawRoutes')
 
 const app = express()
 
+// app.use(cors())
+
 const allowedOrigins = process.env.CLIENT_ORIGIN
-  ? process.env.CLIENT_ORIGIN
-      .split(',')
-      .map((origin) => origin.trim())
-      .filter(Boolean)
+  ? process.env.CLIENT_ORIGIN.split(',').map((origin) => origin.trim())
   : []
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests without an Origin
-      // (Postman, server-to-server requests, etc.)
       if (!origin) {
         return callback(null, true)
       }
@@ -27,12 +23,12 @@ app.use(
         return callback(null, true)
       }
 
-      return callback(new Error('Not allowed by CORS'))
+      console.log('Blocked CORS origin:', origin)
+      return callback(new Error(`CORS blocked: ${origin}`))
     },
     credentials: true,
   })
 )
-
 app.use(express.json())
 
 app.get('/api/health', (req, res) => {
@@ -44,14 +40,11 @@ app.use('/api/coupons', couponRoutes)
 app.use('/api/draws', drawRoutes)
 
 app.use((req, res) => {
-  res.status(404).json({
-    message: 'Route not found',
-  })
+  res.status(404).json({ message: 'Route not found' })
 })
 
 app.use((error, req, res, next) => {
   console.error(error)
-
   res.status(error.status || 500).json({
     message: error.message || 'Server error',
   })
