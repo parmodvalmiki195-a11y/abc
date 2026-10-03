@@ -15,16 +15,14 @@ app.get('/VERCEL-TEST-123', (req, res) => {
 
 // app.use(cors())
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'https://goldencouponbombay.coupons',
-  'https://www.goldencouponbombay.coupons',
-]
+// const allowedOrigins = [
+//   'http://localhost:5173',
+//   'http://127.0.0.1:5173',
+//   'https://goldencouponbombay.coupons',
+//   'https://www.goldencouponbombay.coupons',
+// ]
 
-app.use(
-  cors()
-)
+app.use(cors())
 app.use(express.json())
 
 app.get('/', (req, res) => {
