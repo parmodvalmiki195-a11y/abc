@@ -29,6 +29,7 @@ function serializeDraw(draw) {
 
 function formatTime(date) {
   return date.toLocaleTimeString('en-IN', {
+    timeZone: TIME_ZONE,
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,

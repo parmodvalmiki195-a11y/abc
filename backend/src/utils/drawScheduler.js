@@ -1,20 +1,31 @@
 const Draw = require('../models/Draw')
 const Coupon = require('../models/Coupon')
 
-const TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'server-local'
+const TIME_ZONE = process.env.DRAW_TIME_ZONE || 'Asia/Kolkata'
 const START_HOUR = 8
 const END_HOUR = 22
 const SLOT_MINUTES = 15
 
+const serverTimeFormatter = new Intl.DateTimeFormat('en-CA', {
+  timeZone: TIME_ZONE,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hourCycle: 'h23',
+})
+
 function getParts(date = new Date()) {
-  return {
-    year: date.getFullYear(),
-    month: date.getMonth() + 1,
-    day: date.getDate(),
-    hour: date.getHours(),
-    minute: date.getMinutes(),
-    second: date.getSeconds(),
-  }
+  const parts = Object.fromEntries(
+    serverTimeFormatter
+      .formatToParts(date)
+      .filter((part) => part.type !== 'literal')
+      .map((part) => [part.type, Number(part.value)]),
+  )
+
+  return parts
 }
 
 function pad(value) {
@@ -36,7 +47,30 @@ function toSlotKey(drawDate, slotTime) {
 function serverTimeToDate(drawDate, slotTime) {
   const [year, month, day] = drawDate.split('-').map(Number)
   const [hour, minute] = slotTime.split(':').map(Number)
-  return new Date(year, month - 1, day, hour, minute, 0, 0)
+  const utcGuess = new Date(Date.UTC(year, month - 1, day, hour, minute, 0, 0))
+  const firstOffset = getTimeZoneOffset(utcGuess)
+  let result = new Date(utcGuess.getTime() - firstOffset)
+  const secondOffset = getTimeZoneOffset(result)
+
+  if (secondOffset !== firstOffset) {
+    result = new Date(utcGuess.getTime() - secondOffset)
+  }
+
+  return result
+}
+
+function getTimeZoneOffset(date) {
+  const parts = getParts(date)
+  const zonedTimeAsUtc = Date.UTC(
+    parts.year,
+    parts.month - 1,
+    parts.day,
+    parts.hour,
+    parts.minute,
+    parts.second,
+  )
+
+  return zonedTimeAsUtc - date.getTime()
 }
 
 function addMinutes(date, minutes) {
