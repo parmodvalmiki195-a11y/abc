@@ -1,0 +1,12 @@
+html {
+  background: #ef5d88;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
