@@ -6,6 +6,13 @@ const drawRoutes = require('./routes/drawRoutes')
 
 const app = express()
 
+app.get('/VERCEL-TEST-123', (req, res) => {
+  res.json({
+    status: 'success',
+    message: 'THIS IS THE NEW DEPLOYED APP'
+  })
+})
+
 // app.use(cors())
 
 const allowedOrigins = process.env.CLIENT_ORIGIN
