@@ -1,6 +1,4 @@
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  'https://abc-git-main-parmodvalmiki195-6100.vercel.app/api'
+const API_URL ='https://abc-git-main-parmodvalmiki195-6100.vercel.app/api'
   
 
 async function request(path, options = {}) {

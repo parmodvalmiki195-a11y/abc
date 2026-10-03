@@ -15,26 +15,15 @@ app.get('/VERCEL-TEST-123', (req, res) => {
 
 // app.use(cors())
 
-const allowedOrigins = process.env.CLIENT_ORIGIN
-  ? process.env.CLIENT_ORIGIN.split(',').map((origin) => origin.trim())
-  : []
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://goldencouponbombay.coupons',
+  'https://www.goldencouponbombay.coupons',
+]
 
 app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        return callback(null, true)
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true)
-      }
-
-      console.log('Blocked CORS origin:', origin)
-      return callback(new Error(`CORS blocked: ${origin}`))
-    },
-    credentials: true,
-  })
+  cors()
 )
 app.use(express.json())
 
