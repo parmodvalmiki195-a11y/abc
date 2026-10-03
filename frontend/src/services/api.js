@@ -1,6 +1,7 @@
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  'https://abc-mt84cy2uz-parmodvalmiki195-6100.vercel.app/api'
+  'https://abc-git-main-parmodvalmiki195-6100.vercel.app/api'
+  
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
