@@ -31,7 +31,7 @@ app.use(
 )
 app.use(express.json())
 
-app.get('/api/health', (req, res) => {
+app.get('/api/health/application', (req, res) => {
   res.json({ status: 'ok good' })
 })
 
