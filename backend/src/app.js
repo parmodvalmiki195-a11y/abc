@@ -31,6 +31,13 @@ app.use(
 )
 app.use(express.json())
 
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Backend is running'
+  })
+})
+
 app.get('/api/health/application', (req, res) => {
   res.json({ status: 'ok good' })
 })
