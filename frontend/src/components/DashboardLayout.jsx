@@ -111,7 +111,9 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
 
   const resultDraw = drawInfo?.latestFinal
   const resultMap = resultsToMap(resultDraw?.results || [])
-  const resultHeader = resultDraw?.resultTime || formatSlotTime(resultDraw?.slotTime)
+  const resultHeader = isLoading
+    ? 'Loading...'
+    : resultDraw?.resultTime || formatSlotTime(resultDraw?.slotTime)
   const displayCoupons = useMemo(
     () =>
       coupons.map((coupon) => {
@@ -119,11 +121,11 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
 
         return {
           ...coupon,
-          result: resultMap[couponId] || coupon.result || '',
+          result: isLoading ? 'Loading...' : resultMap[couponId] || coupon.result || '',
           incomingResult: pendingResults[couponId] ?? '',
         }
       }),
-    [coupons, pendingResults, resultMap],
+    [coupons, isLoading, pendingResults, resultMap],
   )
 
   const totals = useMemo(
