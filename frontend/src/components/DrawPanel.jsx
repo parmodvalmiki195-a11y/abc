@@ -24,7 +24,7 @@ function DrawPanel({ drawInfo, isAdmin, onSaveResult }) {
   return (
     <section className="border border-[#9f9f85] bg-[#fff1b8] px-4 py-3 shadow-sm">
       <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div className="grid gap-2 sm:grid-cols-4">
+        <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-[0.8fr_0.8fr_1.7fr_0.7fr]">
           <InfoItem
             label="Current Slot"
             value={currentSlot?.active ? formatSlotTime(currentSlot.slotTime) : 'Closed'}
@@ -33,10 +33,7 @@ function DrawPanel({ drawInfo, isAdmin, onSaveResult }) {
             label="Next Result"
             value={drawInfo?.nextResultTime || '--'}
           />
-          <InfoItem
-            label="Latest Result"
-            value={displayDraw?.resultValue || '--'}
-          />
+          <LatestResults results={displayDraw?.results || []} />
           <InfoItem
             label="Source"
             value={displayDraw?.source || 'pending'}
@@ -61,6 +58,31 @@ function DrawPanel({ drawInfo, isAdmin, onSaveResult }) {
         ) : null}
       </div>
     </section>
+  )
+}
+
+function LatestResults({ results }) {
+  return (
+    <div className="rounded-sm border border-[#c2ad72] bg-white/70 px-3 py-2">
+      <div className="text-xs font-bold uppercase text-slate-600">Latest Result</div>
+      {results.length > 0 ? (
+        <div className="mt-1 grid grid-cols-3 gap-2">
+          {results.map((result) => (
+            <div key={String(result.couponId)} className="min-w-0">
+              <div
+                className="truncate text-[10px] font-bold uppercase text-slate-600"
+                title={result.couponName}
+              >
+                {result.couponName}
+              </div>
+              <div className="text-xl font-black text-slate-950">{result.value || '--'}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-xl font-black text-slate-950">--</div>
+      )}
+    </div>
   )
 }
 
