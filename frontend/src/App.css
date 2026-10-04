@@ -1,5 +1,5 @@
 html {
-  background: #ef5d88;
+  background: #ffffff;
   overflow-x: hidden;
 }
 
@@ -14,8 +14,8 @@ body {
 }
 
 #root {
-  width: 1492px;
-  min-width: 1492px;
+  width: 1180px;
+  min-width: 1180px;
   margin: 0 auto;
 }
 

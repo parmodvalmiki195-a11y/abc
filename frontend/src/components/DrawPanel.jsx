@@ -47,9 +47,9 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
           direction="down"
           width="250"
           height="100"
-          behavior="alternate"
-          class="outlined">
-          <marquee behavior="alternate"><h3 className='text-black'>GOLDERN COUPON BOMBAY</h3></marquee>
+          {...{ behavior: 'alternate' }}
+          className="outlined">
+          <marquee {...{ behavior: 'alternate' }}><h3 className='text-black'>GOLDERN COUPON BOMBAY</h3></marquee>
         </marquee>
       </div>
 
