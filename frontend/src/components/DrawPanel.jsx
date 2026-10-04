@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
-function DrawPanel({ drawInfo, isAdmin, onSaveResult }) {
+function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveResult }) {
   const [isSaving, setIsSaving] = useState(false)
   const [now, setNow] = useState(() => Date.now())
 
@@ -52,19 +52,59 @@ function DrawPanel({ drawInfo, isAdmin, onSaveResult }) {
         <div className="sm:text-right">
           <p>Coupon Draw Time: {drawInfo?.nextResultTime || '--'}</p>
           <p className="mt-1">Time left for Draw: {formatCountdown(remainingSeconds)}</p>
-          {isAdmin ? (
-            <form onSubmit={handleSubmit} className="mt-3 flex justify-start sm:justify-end">
-              <button
-                disabled={!currentSlot?.active || isSaving}
-                title={currentSlot?.active ? 'Save current slot results' : 'Results can only be saved during draw hours'}
-                className="h-9 rounded bg-[#001f70] px-5 text-sm font-bold text-white hover:bg-[#082a85] disabled:cursor-not-allowed disabled:bg-slate-500"
-              >
-                {isSaving ? 'Saving...' : 'Save Results'}
-              </button>
-            </form>
-          ) : null}
         </div>
       </div>
+
+      {isAdmin ? (
+        <form
+          onSubmit={handleSubmit}
+          className="mt-6 border border-[#8aa1c5] bg-[#edf4ff] p-3 text-left shadow-sm"
+        >
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-base font-black uppercase text-[#001f70]">Incoming Results</h2>
+              <p className="text-xs font-semibold text-slate-600">
+                Next draw: {drawInfo?.nextResultTime || '--'}
+              </p>
+            </div>
+            {!drawInfo?.incomingAvailable ? (
+              <p className="text-xs font-bold text-slate-600">
+                Values will appear 5 minutes before the draw.
+              </p>
+            ) : null}
+          </div>
+
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            {coupons.map((coupon) => {
+              const couponId = coupon._id || coupon.id
+
+              return (
+                <label key={couponId} className="block">
+                  <span className="mb-1 block text-xs font-black uppercase text-slate-700">
+                    {coupon.name}
+                  </span>
+                  <input
+                    disabled={!drawInfo?.incomingAvailable}
+                    inputMode="numeric"
+                    value={coupon.incomingResult}
+                    onChange={(event) => onIncomingResultChange(couponId, event.target.value)}
+                    className="h-10 w-full rounded-sm border border-[#8aa1c5] bg-white px-3 text-center text-lg font-black outline-none focus:border-[#001f70] focus:ring-1 focus:ring-[#001f70] disabled:cursor-not-allowed disabled:bg-slate-100"
+                  />
+                </label>
+              )
+            })}
+          </div>
+
+          <div className="mt-3 flex justify-end">
+            <button
+              disabled={!currentSlot?.active || !drawInfo?.incomingAvailable || isSaving}
+              className="h-9 rounded bg-[#001f70] px-6 text-sm font-bold text-white hover:bg-[#082a85] disabled:cursor-not-allowed disabled:bg-slate-500"
+            >
+              {isSaving ? 'Saving...' : 'Save Incoming Results'}
+            </button>
+          </div>
+        </form>
+      ) : null}
     </section>
   )
 }

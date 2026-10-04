@@ -16,9 +16,9 @@ function AuthPanel({ cardNo, isAdmin, onCardNoChange, onPinNoChange, pinNo }) {
           className="h-9 rounded-sm border border-[#aaa] bg-white px-3 outline-none focus:border-[#001f70] focus:ring-1 focus:ring-[#001f70]"
           readOnly={!isAdmin}
         />
-        <button className="h-9 rounded-none border border-[#8fa784] bg-[#d7e8c6] px-7 text-base hover:bg-[#cbe1b8]">
+        {/* <button className="h-9 rounded-none border border-[#8fa784] bg-[#d7e8c6] px-7 text-base hover:bg-[#cbe1b8]">
           Login
-        </button>
+        </button> */}
       </div>
     </section>
   )

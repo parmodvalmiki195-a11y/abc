@@ -27,6 +27,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const currentSlotKeyRef = useRef(null)
+  const pendingResultsDirtyRef = useRef(false)
 
   useEffect(() => {
     let isMounted = true
@@ -36,7 +37,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
       setDrawInfo(drawData)
 
       const nextSlotKey = drawData?.currentDraw?.slotKey || null
-      if (nextSlotKey !== currentSlotKeyRef.current) {
+      if (nextSlotKey !== currentSlotKeyRef.current || !pendingResultsDirtyRef.current) {
         currentSlotKeyRef.current = nextSlotKey
         setPendingResults(resultsToMap(drawData?.currentDraw?.results || []))
       }
@@ -46,7 +47,14 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
       clearTimeout(refreshTimer)
 
       const nextResultAt = drawData?.nextResultAt ? new Date(drawData.nextResultAt).getTime() : 0
-      const delay = nextResultAt - Date.now()
+      const incomingAvailableAt = drawData?.incomingAvailableAt
+        ? new Date(drawData.incomingAvailableAt).getTime()
+        : 0
+      const refreshAt =
+        isAdmin && !drawData?.incomingAvailable && incomingAvailableAt > Date.now()
+          ? incomingAvailableAt
+          : nextResultAt
+      const delay = refreshAt - Date.now()
       const refreshDelay = delay > 0 ? delay + 1200 : 5000
 
       refreshTimer = setTimeout(refreshDrawData, Math.min(refreshDelay, 60 * 1000))
@@ -54,7 +62,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
 
     async function refreshDrawData() {
       try {
-        const drawData = await getCurrentDraw()
+        const drawData = await getCurrentDraw(token)
 
         if (isMounted) {
           applyDrawData(drawData)
@@ -71,7 +79,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
 
     async function loadDashboard() {
       try {
-        const [couponData, drawData] = await Promise.all([getCoupons(), getCurrentDraw()])
+        const [couponData, drawData] = await Promise.all([getCoupons(), getCurrentDraw(token)])
 
         if (isMounted) {
           setCoupons(couponData.coupons)
@@ -97,12 +105,11 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
       isMounted = false
       clearTimeout(refreshTimer)
     }
-  }, [isAdmin])
+  }, [isAdmin, token])
 
   const resultDraw = drawInfo?.latestFinal
   const resultMap = resultsToMap(resultDraw?.results || [])
   const resultHeader = formatSlotTime(resultDraw?.slotTime)
-  const nextResultHeader = drawInfo?.nextResultTime || '--'
   const displayCoupons = useMemo(
     () =>
       coupons.map((coupon) => {
@@ -160,6 +167,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
   }
 
   const updateCouponResult = (couponId, value) => {
+    pendingResultsDirtyRef.current = true
     setPendingResults((currentResults) => ({
       ...currentResults,
       [couponId]: value.replace(/\D/g, '').slice(0, 2),
@@ -215,9 +223,10 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
       }
 
       const draw = await setCurrentDrawResult({ results }, token)
-      const drawData = await getCurrentDraw()
+      const drawData = await getCurrentDraw(token)
       setDrawInfo({ ...drawData, currentDraw: draw })
       setPendingResults(resultsToMap(draw.results || []))
+      pendingResultsDirtyRef.current = false
       setError('')
     } catch (apiError) {
       setError(apiError.message)
@@ -227,7 +236,13 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
   return (
     <main className="min-h-screen bg-[#ef5d88] px-3 py-5 text-slate-950 sm:px-8 lg:px-[50px]">
       <section className="mx-auto flex max-w-[1395px] flex-col gap-2">
-        <DrawPanel drawInfo={drawInfo} isAdmin={isAdmin} onSaveResult={saveDrawResult} />
+        <DrawPanel
+          coupons={displayCoupons}
+          drawInfo={drawInfo}
+          isAdmin={isAdmin}
+          onIncomingResultChange={updateCouponResult}
+          onSaveResult={saveDrawResult}
+        />
         <PageHeader
           activeType={activeType}
           couponTypes={couponTypes}
@@ -251,8 +266,6 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
             isAdmin={isAdmin}
             numberColumns={numberColumns}
             onCouponFieldChange={updateCouponField}
-            onCouponResultChange={updateCouponResult}
-            nextResultHeader={nextResultHeader}
             resultHeader={resultHeader}
           />
           <MobileCouponCards
@@ -260,8 +273,6 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
             isAdmin={isAdmin}
             numberColumns={numberColumns}
             onCouponFieldChange={updateCouponField}
-            onCouponResultChange={updateCouponResult}
-            nextResultHeader={nextResultHeader}
             resultHeader={resultHeader}
           />
           <AuthPanel

@@ -1,10 +1,10 @@
 const Draw = require('../models/Draw')
 const {
   TIME_ZONE,
-  ensureCurrentDraw,
+  INCOMING_MINUTES,
   finalizeDueDraws,
   getParts,
-  syncCouponResults,
+  prepareIncomingDraw,
 } = require('../utils/drawScheduler')
 
 function serializeDraw(draw) {
@@ -36,25 +36,45 @@ function formatTime(date) {
   })
 }
 
+async function buildCurrentDrawResponse(includeIncoming) {
+  const now = new Date()
+  await finalizeDueDraws(now)
+
+  const {
+    currentSlot,
+    currentDraw,
+    incomingAvailable,
+    incomingAvailableAt,
+  } = await prepareIncomingDraw(now)
+  const latestFinal = await Draw.findOne({ status: 'final' }).sort({ startsAt: -1 })
+
+  return {
+    timeZone: TIME_ZONE,
+    now,
+    currentSlot,
+    nextResultAt: currentSlot.active ? currentSlot.endsAt : currentSlot.nextSlot.startsAt,
+    nextResultTime: formatTime(
+      currentSlot.active ? currentSlot.endsAt : currentSlot.nextSlot.startsAt,
+    ),
+    incomingAvailable,
+    incomingAvailableAt,
+    incomingMinutes: INCOMING_MINUTES,
+    currentDraw: includeIncoming ? serializeDraw(currentDraw) : null,
+    latestFinal: serializeDraw(latestFinal),
+  }
+}
+
 async function getCurrentDraw(req, res, next) {
   try {
-    const now = new Date()
-    await finalizeDueDraws(now)
+    return res.json(await buildCurrentDrawResponse(false))
+  } catch (error) {
+    return next(error)
+  }
+}
 
-    const { currentSlot, currentDraw } = await ensureCurrentDraw(now)
-    const latestFinal = await Draw.findOne({ status: 'final' }).sort({ startsAt: -1 })
-
-    return res.json({
-      timeZone: TIME_ZONE,
-      now,
-      currentSlot,
-      nextResultAt: currentSlot.active ? currentSlot.endsAt : currentSlot.nextSlot.startsAt,
-      nextResultTime: formatTime(
-        currentSlot.active ? currentSlot.endsAt : currentSlot.nextSlot.startsAt,
-      ),
-      currentDraw: serializeDraw(currentDraw),
-      latestFinal: serializeDraw(latestFinal),
-    })
+async function getAdminCurrentDraw(req, res, next) {
+  try {
+    return res.json(await buildCurrentDrawResponse(true))
   } catch (error) {
     return next(error)
   }
@@ -69,7 +89,7 @@ async function getDrawHistory(req, res, next) {
       parts.day,
     ).padStart(2, '0')}`
     const drawDate = req.query.date || defaultDate
-    const draws = await Draw.find({ drawDate }).sort({ startsAt: 1 })
+    const draws = await Draw.find({ drawDate, status: 'final' }).sort({ startsAt: 1 })
 
     return res.json({
       timeZone: TIME_ZONE,
@@ -100,10 +120,20 @@ async function setCurrentDrawResult(req, res, next) {
     const now = new Date()
     await finalizeDueDraws(now)
 
-    const { currentSlot, currentDraw } = await ensureCurrentDraw(now)
+    const {
+      currentSlot,
+      currentDraw,
+      incomingAvailable,
+    } = await prepareIncomingDraw(now)
 
     if (!currentSlot.active || !currentDraw) {
       return res.status(400).json({ message: 'Draw entry is closed. Next draw starts at 08:00.' })
+    }
+
+    if (!incomingAvailable) {
+      return res.status(400).json({
+        message: `Incoming results become available ${INCOMING_MINUTES} minutes before the draw.`,
+      })
     }
 
     if (currentDraw.status === 'final') {
@@ -154,10 +184,6 @@ async function setCurrentDrawResult(req, res, next) {
       { returnDocument: 'after', runValidators: true },
     )
 
-    if (draw.results?.length) {
-      await syncCouponResults(draw.results)
-    }
-
     return res.json(serializeDraw(draw))
   } catch (error) {
     return next(error)
@@ -165,6 +191,7 @@ async function setCurrentDrawResult(req, res, next) {
 }
 
 module.exports = {
+  getAdminCurrentDraw,
   getCurrentDraw,
   getDrawHistory,
   setCurrentDrawResult,

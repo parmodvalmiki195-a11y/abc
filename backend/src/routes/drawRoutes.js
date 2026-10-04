@@ -1,5 +1,6 @@
 const express = require('express')
 const {
+  getAdminCurrentDraw,
   getCurrentDraw,
   getDrawHistory,
   setCurrentDrawResult,
@@ -8,6 +9,7 @@ const requireAdmin = require('../middleware/auth')
 
 const router = express.Router()
 
+router.get('/current/admin', requireAdmin, getAdminCurrentDraw)
 router.get('/current', getCurrentDraw)
 router.get('/', getDrawHistory)
 router.put('/current', requireAdmin, setCurrentDrawResult)

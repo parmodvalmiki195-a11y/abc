@@ -5,6 +5,7 @@ const TIME_ZONE = process.env.DRAW_TIME_ZONE || 'Asia/Kolkata'
 const START_HOUR = 8
 const END_HOUR = 22
 const SLOT_MINUTES = 15
+const INCOMING_MINUTES = 5
 
 const serverTimeFormatter = new Intl.DateTimeFormat('en-CA', {
   timeZone: TIME_ZONE,
@@ -290,12 +291,62 @@ async function ensureCurrentDraw(now = new Date()) {
   return { currentSlot, currentDraw }
 }
 
+async function prepareIncomingDraw(now = new Date()) {
+  const { currentSlot, currentDraw } = await ensureCurrentDraw(now)
+
+  if (!currentSlot.active || !currentDraw) {
+    return { currentSlot, currentDraw, incomingAvailable: false, incomingAvailableAt: null }
+  }
+
+  const incomingAvailableAt = addMinutes(currentSlot.endsAt, -INCOMING_MINUTES)
+  const incomingAvailable = now >= incomingAvailableAt
+
+  if (!incomingAvailable || currentDraw.status === 'final') {
+    return { currentSlot, currentDraw, incomingAvailable, incomingAvailableAt }
+  }
+
+  const needsIncomingValues = currentDraw.results.some((result) => !result.value)
+
+  if (!needsIncomingValues) {
+    return { currentSlot, currentDraw, incomingAvailable, incomingAvailableAt }
+  }
+
+  const incomingResults = currentDraw.results.map((result) =>
+    result.value
+      ? result
+      : {
+          couponId: result.couponId,
+          couponName: result.couponName,
+          value: createRandomResult(),
+          source: 'random',
+        },
+  )
+  const updatedDraw = await Draw.findByIdAndUpdate(
+    currentDraw._id,
+    {
+      results: incomingResults,
+      resultValue: incomingResults[0]?.value || '',
+      source: getDrawSource(incomingResults),
+    },
+    { returnDocument: 'after', runValidators: true },
+  )
+
+  return {
+    currentSlot,
+    currentDraw: updatedDraw,
+    incomingAvailable,
+    incomingAvailableAt,
+  }
+}
+
 module.exports = {
+  INCOMING_MINUTES,
   TIME_ZONE,
   finalizeDueDraws,
   getCurrentSlot,
   getParts,
   getSlotsForDate,
   ensureCurrentDraw,
+  prepareIncomingDraw,
   syncCouponResults,
 }

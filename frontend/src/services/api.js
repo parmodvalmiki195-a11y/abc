@@ -47,8 +47,8 @@ export function replaceCoupons(coupons, token) {
   })
 }
 
-export function getCurrentDraw() {
-  return request('/draws/current')
+export function getCurrentDraw(token) {
+  return request(token ? '/draws/current/admin' : '/draws/current', { token })
 }
 
 export function getDrawHistory(date) {
