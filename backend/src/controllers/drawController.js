@@ -17,6 +17,7 @@ function serializeDraw(draw) {
     slotKey: draw.slotKey,
     drawDate: draw.drawDate,
     slotTime: draw.slotTime,
+    resultTime: formatTime(draw.endsAt),
     startsAt: draw.startsAt,
     endsAt: draw.endsAt,
     resultValue: draw.resultValue,
@@ -82,6 +83,8 @@ async function getAdminCurrentDraw(req, res, next) {
 
 async function getDrawHistory(req, res, next) {
   try {
+    await finalizeDueDraws(new Date())
+
     const parts = getParts(new Date())
     const defaultDate = `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(
       parts.day,

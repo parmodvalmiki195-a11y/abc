@@ -68,7 +68,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
           applyDrawData(drawData)
           setError('')
           scheduleNextDrawRefresh(drawData)
-          getDrawHistory(drawData.currentSlot?.drawDate).catch(() => {})
+          getDrawHistory(drawData.currentSlot?.drawDate, true).catch(() => {})
         }
       } catch (apiError) {
         if (isMounted) {
@@ -87,7 +87,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
           applyDrawData(drawData)
           setError('')
           scheduleNextDrawRefresh(drawData)
-          getDrawHistory(drawData.currentSlot?.drawDate).catch(() => {})
+          getDrawHistory(drawData.currentSlot?.drawDate, true).catch(() => {})
         }
       } catch (apiError) {
         if (isMounted) {
@@ -111,7 +111,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
 
   const resultDraw = drawInfo?.latestFinal
   const resultMap = resultsToMap(resultDraw?.results || [])
-  const resultHeader = formatSlotTime(resultDraw?.slotTime)
+  const resultHeader = resultDraw?.resultTime || formatSlotTime(resultDraw?.slotTime)
   const displayCoupons = useMemo(
     () =>
       coupons.map((coupon) => {

@@ -52,12 +52,12 @@ export function getCurrentDraw(token) {
   return request(token ? '/draws/current/admin' : '/draws/current', { token })
 }
 
-export function getDrawHistory(date) {
+export function getDrawHistory(date, force = false) {
   const query = date ? `?date=${encodeURIComponent(date)}` : ''
   const cacheKey = date || 'today'
   const cached = drawHistoryCache.get(cacheKey)
 
-  if (cached && Date.now() - cached.createdAt < REPORT_CACHE_MS) {
+  if (!force && cached && Date.now() - cached.createdAt < REPORT_CACHE_MS) {
     return cached.promise
   }
 

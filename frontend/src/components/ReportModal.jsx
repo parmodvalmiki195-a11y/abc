@@ -115,7 +115,9 @@ function ReportModal({ coupons, defaultDate, onClose }) {
 
                 return (
                   <tr key={draw.id} className={draw.status === 'final' ? 'bg-[#eeeeee]' : 'bg-[#fff0b5]'}>
-                    <td className="border border-[#aaa] px-3 py-2 font-black">{formatSlotTime(draw.slotTime)}</td>
+                    <td className="border border-[#aaa] px-3 py-2 font-black">
+                      {draw.resultTime || formatSlotTime(draw.slotTime)}
+                    </td>
                     {couponColumns.map((coupon) => (
                       <td key={coupon.id} className="border border-[#aaa] px-3 py-2 text-center font-black">
                         {resultMap[coupon.id] || '--'}

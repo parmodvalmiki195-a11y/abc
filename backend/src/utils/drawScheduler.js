@@ -5,7 +5,7 @@ const TIME_ZONE = process.env.DRAW_TIME_ZONE || 'Asia/Kolkata'
 const START_HOUR = 8
 const END_HOUR = 22
 const SLOT_MINUTES = 15
-const INCOMING_MINUTES = 5
+const INCOMING_MINUTES = 13
 
 const serverTimeFormatter = new Intl.DateTimeFormat('en-CA', {
   timeZone: TIME_ZONE,

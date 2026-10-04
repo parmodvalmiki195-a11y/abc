@@ -78,7 +78,7 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
             </div>
             {!drawInfo?.incomingAvailable ? (
               <p className="text-xs font-bold text-slate-600">
-                Values will appear 5 minutes before the draw.
+                Values will appear {drawInfo?.incomingMinutes || 13} minutes before the draw.
               </p>
             ) : null}
           </div>
