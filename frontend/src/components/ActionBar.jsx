@@ -11,12 +11,12 @@ const actions = [
 function ActionBar({ isAdmin, onClearValues, onReportOpen, totals }) {
   return (
     <section>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[100px_115px_202px_200px_1fr_130px_130px_127px] lg:items-center lg:gap-5">
+      <div className="grid grid-cols-[100px_115px_202px_200px_1fr_130px_130px_127px] items-center gap-5">
         {actions.slice(0, 4).map((action) => (
           <ActionButton key={action.label} action={action} onClearValues={onClearValues} />
         ))}
 
-        <div className="px-3 py-2 text-center text-sm font-bold text-[#4b0520] lg:py-0">
+        <div className="px-3 text-center text-sm font-bold text-[#4b0520]">
           {isAdmin ? 'Admin editing enabled' : `Total Qty ${totals.qty} | Points ${totals.points}`}
         </div>
 

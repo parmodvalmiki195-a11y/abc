@@ -6,8 +6,8 @@ function PageHeader({
 }) {
   return (
     <header>
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <nav className="grid flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7">
+      <div className="flex flex-row items-center justify-between gap-3">
+        <nav className="grid flex-1 grid-cols-4 gap-7">
           {couponTypes.map((type) => (
             <button
               key={type}
@@ -25,7 +25,7 @@ function PageHeader({
 
         <button
           onClick={onLogout}
-          className="h-11 rounded-md bg-white px-8 text-lg text-slate-950 shadow-sm hover:bg-slate-100 lg:ml-16"
+          className="ml-16 h-11 rounded-md bg-white px-8 text-lg text-slate-950 shadow-sm hover:bg-slate-100"
         >
           Logout
         </button>

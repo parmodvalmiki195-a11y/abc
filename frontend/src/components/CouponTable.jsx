@@ -8,7 +8,7 @@ function CouponTable({
   resultHeader,
 }) {
   return (
-    <div className="hidden overflow-x-auto border border-[#9f9f85] bg-[#f4e8a7] shadow-sm md:block">
+    <div className="block overflow-x-auto border border-[#9f9f85] bg-[#f4e8a7] shadow-sm">
       <table className="w-full min-w-[1000px] table-fixed border-collapse text-sm">
         <thead>
           <tr className="bg-[#fff1b8] text-center font-bold">

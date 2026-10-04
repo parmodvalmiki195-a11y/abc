@@ -3,7 +3,6 @@ import ActionBar from './ActionBar'
 import AuthPanel from './AuthPanel'
 import CouponTable from './CouponTable'
 import DrawPanel from './DrawPanel'
-import MobileCouponCards from './MobileCouponCards'
 import PageHeader from './PageHeader'
 import ReportModal from './ReportModal'
 import { couponTypes, initialCoupons, numberColumns } from '../data/coupons'
@@ -234,8 +233,8 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#ef5d88] px-3 py-5 text-slate-950 sm:px-8 lg:px-[50px]">
-      <section className="mx-auto flex max-w-[1395px] flex-col gap-2">
+    <main className="min-h-screen min-w-[1492px] bg-[#ef5d88] px-[50px] py-5 text-slate-950">
+      <section className="mx-auto flex w-full max-w-[1395px] flex-col gap-2">
         <DrawPanel
           coupons={displayCoupons}
           drawInfo={drawInfo}
@@ -268,13 +267,6 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
             onCouponFieldChange={updateCouponField}
             resultHeader={resultHeader}
           />
-          <MobileCouponCards
-            coupons={displayCoupons}
-            isAdmin={isAdmin}
-            numberColumns={numberColumns}
-            onCouponFieldChange={updateCouponField}
-            resultHeader={resultHeader}
-          />
           <AuthPanel
             cardNo={cardNo}
             isAdmin={isAdmin}
@@ -290,7 +282,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
           onReportOpen={() => setIsReportOpen(true)}
           totals={totals}
         />
-        <footer className="pt-9 text-center text-sm font-bold sm:text-lg">
+        <footer className="pt-9 text-center text-lg font-bold">
           <p>Reach us info@mail.com</p>
           <p>Copyright © 2024 www.goldennavratnakuber.com. All rights reserved.</p>
           <p>Reach us at: 0312-321091</p>

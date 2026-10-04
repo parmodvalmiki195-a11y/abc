@@ -36,20 +36,20 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
   }
 
   return (
-    <section className="pb-9 pt-3 sm:pb-12 sm:pt-5">
+    <section className="pb-12 pt-5">
       <div className="text-center">
-        <p className="text-lg font-bold sm:text-xl">Welcome {isAdmin ? 'Admin' : 'Player'}!!</p>
-        <h1 className="mt-1 text-2xl font-black text-yellow-300 sm:text-4xl">
+        <p className="text-xl font-bold">Welcome {isAdmin ? 'Admin' : 'Player'}!!</p>
+        <h1 className="mt-1 text-4xl font-black text-yellow-300">
           Golden Navratna Kuber
         </h1>
       </div>
 
-      <div className="mt-14 grid gap-5 text-base font-bold sm:mt-20 sm:grid-cols-2 sm:text-xl">
+      <div className="mt-20 grid grid-cols-2 gap-5 text-xl font-bold">
         <div>
           <p>Server Time: {serverTime}</p>
           <p className="mt-1">Balance Points: 0</p>
         </div>
-        <div className="sm:text-right">
+        <div className="text-right">
           <p>Coupon Draw Time: {drawInfo?.nextResultTime || '--'}</p>
           <p className="mt-1">Time left for Draw: {formatCountdown(remainingSeconds)}</p>
         </div>
@@ -60,7 +60,7 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
           onSubmit={handleSubmit}
           className="mt-6 border border-[#8aa1c5] bg-[#edf4ff] p-3 text-left shadow-sm"
         >
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-row items-end justify-between gap-1">
             <div>
               <h2 className="text-base font-black uppercase text-[#001f70]">Incoming Results</h2>
               <p className="text-xs font-semibold text-slate-600">
@@ -74,7 +74,7 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
             ) : null}
           </div>
 
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div className="mt-3 grid grid-cols-3 gap-3">
             {coupons.map((coupon) => {
               const couponId = coupon._id || coupon.id
 
