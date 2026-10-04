@@ -41,4 +41,52 @@ async function loginAdmin(req, res, next) {
   }
 }
 
-module.exports = { loginAdmin }
+async function verifyAdminUsername(req, res, next) {
+  try {
+    const username = String(req.body.username || '').toLowerCase().trim()
+
+    if (!username) {
+      return res.status(400).json({ message: 'Username is required' })
+    }
+
+    const admin = await Admin.findOne({ _id: req.admin.id, username })
+
+    if (!admin) {
+      return res.status(400).json({ message: 'Username does not match the logged-in admin' })
+    }
+
+    return res.json({ matched: true })
+  } catch (error) {
+    return next(error)
+  }
+}
+
+async function changeAdminPassword(req, res, next) {
+  try {
+    const username = String(req.body.username || '').toLowerCase().trim()
+    const newPassword = String(req.body.newPassword || '')
+
+    if (!username || !newPassword) {
+      return res.status(400).json({ message: 'Username and new password are required' })
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must contain at least 6 characters' })
+    }
+
+    const admin = await Admin.findOne({ _id: req.admin.id, username })
+
+    if (!admin) {
+      return res.status(400).json({ message: 'Username verification failed' })
+    }
+
+    admin.passwordHash = await bcrypt.hash(newPassword, 10)
+    await admin.save()
+
+    return res.json({ message: 'Password changed successfully' })
+  } catch (error) {
+    return next(error)
+  }
+}
+
+module.exports = { changeAdminPassword, loginAdmin, verifyAdminUsername }

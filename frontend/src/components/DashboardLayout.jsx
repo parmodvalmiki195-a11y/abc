@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import ActionBar from './ActionBar'
 import AuthPanel from './AuthPanel'
+import ChangePasswordPanel from './ChangePasswordPanel'
 import CouponTable from './CouponTable'
 import DrawPanel from './DrawPanel'
 import PageHeader from './PageHeader'
@@ -287,6 +288,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
           onReportOpen={() => setIsReportOpen(true)}
           totals={totals}
         />
+        {isAdmin ? <ChangePasswordPanel token={token} /> : null}
         <footer className="pt-9 text-center text-lg font-bold">
           <p>Reach us info@mail.com</p>
           <p>Copyright © 2024 www.goldennavratnakuber.com. All rights reserved.</p>

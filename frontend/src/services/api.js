@@ -28,6 +28,22 @@ export function loginAdmin(credentials) {
   })
 }
 
+export function verifyAdminUsername(username, token) {
+  return request('/auth/verify-username', {
+    method: 'POST',
+    token,
+    body: JSON.stringify({ username }),
+  })
+}
+
+export function changeAdminPassword(username, newPassword, token) {
+  return request('/auth/password', {
+    method: 'PUT',
+    token,
+    body: JSON.stringify({ username, newPassword }),
+  })
+}
+
 export function getCoupons() {
   return request('/coupons')
 }
