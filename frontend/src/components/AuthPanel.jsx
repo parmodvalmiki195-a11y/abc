@@ -1,6 +1,6 @@
 function AuthPanel({ cardNo, isAdmin, onCardNoChange, onPinNoChange, pinNo }) {
   return (
-    <section className="border border-t-0 border-[#9f9f85] bg-[#f4e8a7] px-7 py-3 shadow-sm">
+    <section className="mx-auto w-[1180px] overflow-hidden border border-t-0 border-[#9f9f85] bg-[#f4e8a7] px-7 py-3 shadow-sm">
       <div className="grid grid-cols-[auto_minmax(180px,263px)_auto_minmax(180px,263px)_auto_1fr] items-center gap-4">
         <label className="text-lg font-bold">Card No:</label>
         <input

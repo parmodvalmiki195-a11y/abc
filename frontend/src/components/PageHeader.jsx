@@ -6,13 +6,14 @@ function PageHeader({
 }) {
   return (
     <header>
-      <div className="flex flex-row items-center justify-between gap-3">
-        <nav className="grid flex-1 grid-cols-4 gap-7">
+      <div className="mx-auto grid w-[1180px] grid-cols-[repeat(4,minmax(0,1fr))_120px] items-center gap-5">
+        <nav className="contents">
           {couponTypes.map((type) => (
             <button
               key={type}
+              title={type}
               onClick={() => onTypeChange(type)}
-              className={`h-11 min-w-0 rounded-md px-4 text-base font-bold shadow-sm transition ${
+              className={`h-11 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap rounded-md px-4 text-base font-bold shadow-sm transition ${
                 activeType === type
                   ? 'bg-[#fff1b8] text-slate-950'
                   : 'bg-[#001f70] text-white hover:bg-[#082a85]'
@@ -25,7 +26,7 @@ function PageHeader({
 
         <button
           onClick={onLogout}
-          className="ml-16 h-11 rounded-md bg-white px-8 text-lg text-slate-950 shadow-sm hover:bg-slate-100"
+          className="h-11 rounded-md bg-white px-4 text-lg text-slate-950 shadow-sm hover:bg-slate-100"
         >
           Logout
         </button>

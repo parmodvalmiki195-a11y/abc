@@ -39,17 +39,26 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
     <section className="pb-12 pt-5">
       <div className="text-center">
         <p className="text-xl font-bold">Welcome {isAdmin ? 'Admin' : 'Player'}!!</p>
-        <h1 className="mt-1 text-4xl font-black text-yellow-300">
+        {/* <h1 className="mt-1 text-4xl font-black text-yellow-300">
           GOLDERN COUPON BOMBAY
-        </h1>
+        </h1> */}
+
+        <marquee
+          direction="down"
+          width="250"
+          height="100"
+          behavior="alternate"
+          class="outlined">
+          <marquee behavior="alternate"><h3 className='text-black'>GOLDERN COUPON BOMBAY</h3></marquee>
+        </marquee>
       </div>
 
-      <div className="mt-20 grid grid-cols-2 gap-5 text-xl font-bold">
+      <div className="mx-auto mt-20 grid w-[1180px] grid-cols-2 gap-3 text-xl font-bold">
         <div>
           <p>Server Time: {serverTime}</p>
           <p className="mt-1">Balance Points: 0</p>
         </div>
-        <div className="text-right">
+        <div className="text-right pr-2">
           <p>Coupon Draw Time: {drawInfo?.nextResultTime || '--'}</p>
           <p className="mt-1">Time left for Draw: {formatCountdown(remainingSeconds)}</p>
         </div>
@@ -58,7 +67,7 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
       {isAdmin ? (
         <form
           onSubmit={handleSubmit}
-          className="mt-6 border border-[#8aa1c5] bg-[#edf4ff] p-3 text-left shadow-sm"
+          className="mx-auto mt-6 w-[1180px] border border-[#8aa1c5] bg-[#edf4ff] p-3 text-left shadow-sm"
         >
           <div className="flex flex-row items-end justify-between gap-1">
             <div>
