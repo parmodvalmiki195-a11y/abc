@@ -4,7 +4,7 @@ const actions = [
   { label: 'Clear Coupon', tone: 'danger', clears: true },
   { label: 'More Coupon', tone: 'danger' },
   { label: 'Cancel', tone: 'danger' },
-  { label: 'Report', tone: 'danger' },
+  { label: 'Report', tone: 'success' },
   { label: 'Yantra', tone: 'danger' },
 ]
 
