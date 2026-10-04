@@ -9,14 +9,12 @@ body,
 }
 
 body {
-  display: flex;
-  justify-content: center;
+  width: 100%;
 }
 
 #root {
-  width: 1180px;
+  width: 100%;
   min-width: 1180px;
-  margin: 0 auto;
 }
 
 button,
