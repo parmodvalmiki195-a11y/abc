@@ -6,7 +6,7 @@ function PageHeader({
 }) {
   return (
     <header>
-      <div className="mx-auto grid w-[1180px] grid-cols-[repeat(4,minmax(0,1fr))_120px] items-center gap-5">
+      <div className="mx-auto grid w-[960px] grid-cols-[repeat(4,minmax(0,1fr))_100px] items-center gap-3">
         <nav className="contents">
           {couponTypes.map((type) => (
             <button

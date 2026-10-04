@@ -236,8 +236,8 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
   }
 
   return (
-    <main className="w-full min-w-[1180px] bg-[#ef5d88] py-5 text-slate-950">
-      <section className="mx-auto flex w-[1180px] flex-col gap-2">
+    <main className="w-full min-w-[1000px] bg-[#ef5d88] py-0 text-slate-950">
+      <section className="mx-auto flex w-[960px] flex-col gap-2">
         <DrawPanel
           coupons={displayCoupons}
           drawInfo={drawInfo}

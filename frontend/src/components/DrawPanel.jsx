@@ -53,7 +53,7 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
         </marquee>
       </div>
 
-      <div className="mx-auto mt-20 grid w-[1180px] grid-cols-2 gap-3 text-xl font-bold">
+      <div className="mx-auto mt-20 grid w-[960px] grid-cols-2 gap-3 text-xl font-bold">
         <div>
           <p>Server Time: {serverTime}</p>
           <p className="mt-1">Balance Points: 0</p>
@@ -67,7 +67,7 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
       {isAdmin ? (
         <form
           onSubmit={handleSubmit}
-          className="mx-auto mt-6 w-[1180px] border border-[#8aa1c5] bg-[#edf4ff] p-3 text-left shadow-sm"
+          className="mx-auto mt-6 w-[960px] border border-[#8aa1c5] bg-[#edf4ff] p-3 text-left shadow-sm"
         >
           <div className="flex flex-row items-end justify-between gap-1">
             <div>

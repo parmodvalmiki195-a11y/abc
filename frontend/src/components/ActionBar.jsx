@@ -10,8 +10,8 @@ const actions = [
 
 function ActionBar({ isAdmin, onClearValues, onReportOpen, totals }) {
   return (
-    <section className="mx-auto w-[1180px]">
-      <div className="grid grid-cols-[80px_95px_150px_150px_1fr_110px_110px_105px] items-center gap-5">
+    <section className="mx-auto w-[960px]">
+      <div className="grid grid-cols-[70px_80px_135px_135px_1fr_95px_95px_90px] items-center gap-3">
         {actions.slice(0, 4).map((action) => (
           <ActionButton key={action.label} action={action} onClearValues={onClearValues} />
         ))}
