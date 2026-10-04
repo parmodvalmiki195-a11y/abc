@@ -240,7 +240,22 @@ async function finalizeDueDraws(now = new Date()) {
   const slots = getSlotsForDate(drawDate).filter((slot) => slot.endsAt <= now)
   const finalized = []
 
+  if (slots.length === 0) {
+    return finalized
+  }
+
+  const finalizedSlotKeys = new Set(
+    await Draw.find({
+      slotKey: { $in: slots.map((slot) => slot.slotKey) },
+      status: 'final',
+    }).distinct('slotKey'),
+  )
+
   for (const slot of slots) {
+    if (finalizedSlotKeys.has(slot.slotKey)) {
+      continue
+    }
+
     const existingDraw = await ensureDraw(slot)
 
     if (existingDraw.status === 'final') {

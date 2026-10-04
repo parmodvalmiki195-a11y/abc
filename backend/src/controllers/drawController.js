@@ -82,14 +82,14 @@ async function getAdminCurrentDraw(req, res, next) {
 
 async function getDrawHistory(req, res, next) {
   try {
-    await finalizeDueDraws(new Date())
-
     const parts = getParts(new Date())
     const defaultDate = `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(
       parts.day,
     ).padStart(2, '0')}`
     const drawDate = req.query.date || defaultDate
-    const draws = await Draw.find({ drawDate, status: 'final' }).sort({ startsAt: 1 })
+    const draws = await Draw.find({ drawDate, status: 'final' })
+      .sort({ startsAt: 1 })
+      .lean()
 
     return res.json({
       timeZone: TIME_ZONE,

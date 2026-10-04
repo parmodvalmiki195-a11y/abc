@@ -76,4 +76,6 @@ const drawSchema = new mongoose.Schema(
   { timestamps: true },
 )
 
+drawSchema.index({ drawDate: 1, status: 1, startsAt: 1 })
+
 module.exports = mongoose.model('Draw', drawSchema)

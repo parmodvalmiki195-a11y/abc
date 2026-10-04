@@ -1,5 +1,22 @@
 html {
   background: #ef5d88;
+  overflow-x: hidden;
+}
+
+body,
+#root {
+  overflow-x: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+#root {
+  width: 1492px;
+  min-width: 1492px;
+  margin: 0 auto;
 }
 
 button,

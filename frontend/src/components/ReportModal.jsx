@@ -6,8 +6,8 @@ function getTodayDate() {
   return new Date().toISOString().slice(0, 10)
 }
 
-function ReportModal({ coupons, onClose }) {
-  const [date, setDate] = useState(getTodayDate())
+function ReportModal({ coupons, defaultDate, onClose }) {
+  const [date, setDate] = useState(defaultDate || getTodayDate())
   const [draws, setDraws] = useState([])
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)

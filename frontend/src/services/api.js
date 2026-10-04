@@ -1,5 +1,6 @@
 const API_URL ='https://abc-git-main-parmodvalmiki195-6100.vercel.app/api'
-  
+const drawHistoryCache = new Map()
+const REPORT_CACHE_MS = 30 * 1000
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_URL}${path}`, {
@@ -53,7 +54,20 @@ export function getCurrentDraw(token) {
 
 export function getDrawHistory(date) {
   const query = date ? `?date=${encodeURIComponent(date)}` : ''
-  return request(`/draws${query}`)
+  const cacheKey = date || 'today'
+  const cached = drawHistoryCache.get(cacheKey)
+
+  if (cached && Date.now() - cached.createdAt < REPORT_CACHE_MS) {
+    return cached.promise
+  }
+
+  const promise = request(`/draws${query}`).catch((error) => {
+    drawHistoryCache.delete(cacheKey)
+    throw error
+  })
+
+  drawHistoryCache.set(cacheKey, { createdAt: Date.now(), promise })
+  return promise
 }
 
 export function setCurrentDrawResult(payload, token) {

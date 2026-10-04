@@ -40,7 +40,7 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
       <div className="text-center">
         <p className="text-xl font-bold">Welcome {isAdmin ? 'Admin' : 'Player'}!!</p>
         <h1 className="mt-1 text-4xl font-black text-yellow-300">
-          Golden Navratna Kuber
+          GOLDERN COUPON BOMBAY
         </h1>
       </div>
 
