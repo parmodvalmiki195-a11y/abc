@@ -4,14 +4,14 @@ const actions = [
   { label: 'Clear Coupon', tone: 'danger', clears: true },
   { label: 'More Coupon', tone: 'danger' },
   { label: 'Cancel', tone: 'danger' },
-  { label: 'Report', tone: 'success' },
+  { label: 'Report', tone: 'danger' },
   { label: 'Yantra', tone: 'danger' },
 ]
 
 function ActionBar({ isAdmin, onClearValues, onReportOpen, totals }) {
   return (
     <section>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[70px_80px_135px_135px_1fr_90px_90px_88px] lg:items-center lg:gap-8">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[100px_115px_202px_200px_1fr_130px_130px_127px] lg:items-center lg:gap-5">
         {actions.slice(0, 4).map((action) => (
           <ActionButton key={action.label} action={action} onClearValues={onClearValues} />
         ))}
@@ -48,7 +48,7 @@ function ActionButton({ action, onClearValues, onReportOpen }) {
             ? onReportOpen
             : undefined
       }
-      className={`h-8 rounded px-4 font-bold text-white shadow transition ${toneClass}`}
+      className={`h-11 rounded px-4 text-lg font-bold text-white shadow transition ${toneClass}`}
     >
       {action.label}
     </button>

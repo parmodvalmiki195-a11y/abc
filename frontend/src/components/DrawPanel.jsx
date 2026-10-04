@@ -1,13 +1,27 @@
-import { useState } from 'react'
-import { formatSlotTime } from '../utils/time'
+import { useEffect, useMemo, useState } from 'react'
 
 function DrawPanel({ drawInfo, isAdmin, onSaveResult }) {
   const [isSaving, setIsSaving] = useState(false)
+  const [now, setNow] = useState(() => Date.now())
 
-  const currentDraw = drawInfo?.currentDraw
-  const latestFinal = drawInfo?.latestFinal
   const currentSlot = drawInfo?.currentSlot
-  const displayDraw = latestFinal || currentDraw
+  const serverOffset = useMemo(() => {
+    const serverNow = drawInfo?.now ? new Date(drawInfo.now).getTime() : Date.now()
+    return serverNow - Date.now()
+  }, [drawInfo?.now])
+
+  useEffect(() => {
+    const updateClock = () => setNow(Date.now() + serverOffset)
+    updateClock()
+    const timer = setInterval(updateClock, 1000)
+    return () => clearInterval(timer)
+  }, [serverOffset])
+
+  const nextResultAt = drawInfo?.nextResultAt
+    ? new Date(drawInfo.nextResultAt).getTime()
+    : now
+  const remainingSeconds = Math.max(0, Math.ceil((nextResultAt - now) / 1000))
+  const serverTime = formatServerTime(now, drawInfo?.timeZone)
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -22,77 +36,59 @@ function DrawPanel({ drawInfo, isAdmin, onSaveResult }) {
   }
 
   return (
-    <section className="border border-[#9f9f85] bg-[#fff1b8] px-4 py-3 shadow-sm">
-      <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-[0.8fr_0.8fr_1.7fr_0.7fr]">
-          <InfoItem
-            label="Current Slot"
-            value={currentSlot?.active ? formatSlotTime(currentSlot.slotTime) : 'Closed'}
-          />
-          <InfoItem
-            label="Next Result"
-            value={drawInfo?.nextResultTime || '--'}
-          />
-          <LatestResults results={displayDraw?.results || []} />
-          <InfoItem
-            label="Source"
-            value={displayDraw?.source || 'pending'}
-          />
-        </div>
+    <section className="pb-9 pt-3 sm:pb-12 sm:pt-5">
+      <div className="text-center">
+        <p className="text-lg font-bold sm:text-xl">Welcome {isAdmin ? 'Admin' : 'Player'}!!</p>
+        <h1 className="mt-1 text-2xl font-black text-yellow-300 sm:text-4xl">
+          Golden Navratna Kuber
+        </h1>
+      </div>
 
-        {isAdmin ? (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-2 sm:items-end">
-            <button
-              disabled={!currentSlot?.active || isSaving}
-              title={currentSlot?.active ? 'Save current slot results' : 'Results can only be saved during draw hours'}
-              className="h-9 rounded bg-[#001f70] px-5 text-sm font-bold text-white hover:bg-[#082a85] disabled:cursor-not-allowed disabled:bg-slate-500"
-            >
-              {isSaving ? 'Saving...' : 'Save Results'}
-            </button>
-            {!currentSlot?.active ? (
-              <p className="text-xs font-bold text-red-700">
-                Draw entry is closed. Admin results can be saved from 08:00 AM to 10:00 PM.
-              </p>
-            ) : null}
-          </form>
-        ) : null}
+      <div className="mt-14 grid gap-5 text-base font-bold sm:mt-20 sm:grid-cols-2 sm:text-xl">
+        <div>
+          <p>Server Time: {serverTime}</p>
+          <p className="mt-1">Balance Points: 0</p>
+        </div>
+        <div className="sm:text-right">
+          <p>Coupon Draw Time: {drawInfo?.nextResultTime || '--'}</p>
+          <p className="mt-1">Time left for Draw: {formatCountdown(remainingSeconds)}</p>
+          {isAdmin ? (
+            <form onSubmit={handleSubmit} className="mt-3 flex justify-start sm:justify-end">
+              <button
+                disabled={!currentSlot?.active || isSaving}
+                title={currentSlot?.active ? 'Save current slot results' : 'Results can only be saved during draw hours'}
+                className="h-9 rounded bg-[#001f70] px-5 text-sm font-bold text-white hover:bg-[#082a85] disabled:cursor-not-allowed disabled:bg-slate-500"
+              >
+                {isSaving ? 'Saving...' : 'Save Results'}
+              </button>
+            </form>
+          ) : null}
+        </div>
       </div>
     </section>
   )
 }
 
-function LatestResults({ results }) {
-  return (
-    <div className="rounded-sm border border-[#c2ad72] bg-white/70 px-3 py-2">
-      <div className="text-xs font-bold uppercase text-slate-600">Latest Result</div>
-      {results.length > 0 ? (
-        <div className="mt-1 grid grid-cols-3 gap-2">
-          {results.map((result) => (
-            <div key={String(result.couponId)} className="min-w-0">
-              <div
-                className="truncate text-[10px] font-bold uppercase text-slate-600"
-                title={result.couponName}
-              >
-                {result.couponName}
-              </div>
-              <div className="text-xl font-black text-slate-950">{result.value || '--'}</div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-xl font-black text-slate-950">--</div>
-      )}
-    </div>
-  )
+function formatServerTime(timestamp, timeZone = 'Asia/Kolkata') {
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    month: 'numeric',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  }).format(timestamp)
 }
 
-function InfoItem({ label, value }) {
-  return (
-    <div className="rounded-sm border border-[#c2ad72] bg-white/70 px-3 py-2">
-      <div className="text-xs font-bold uppercase text-slate-600">{label}</div>
-      <div className="text-xl font-black text-slate-950">{value}</div>
-    </div>
-  )
+function formatCountdown(totalSeconds) {
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  const parts = [minutes, seconds].map((value) => String(value).padStart(2, '0'))
+
+  return hours > 0 ? `${String(hours).padStart(2, '0')}:${parts.join(':')}` : parts.join(':')
 }
 
 export default DrawPanel

@@ -28,8 +28,6 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
   const [isLoading, setIsLoading] = useState(true)
   const currentSlotKeyRef = useRef(null)
 
-  const mode = isAdmin ? 'admin' : 'user'
-
   useEffect(() => {
     let isMounted = true
     let refreshTimer
@@ -101,15 +99,10 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
     }
   }, [isAdmin])
 
-  const resultDraw = isAdmin ? drawInfo?.currentDraw : drawInfo?.latestFinal
-  const resultMap = isAdmin
-    ? pendingResults
-    : resultsToMap(resultDraw?.results || [])
-  const activeOrNextSlotTime =
-    drawInfo?.currentSlot?.slotTime || drawInfo?.currentSlot?.nextSlot?.slotTime
-  const resultHeader = formatSlotTime(
-    resultDraw?.slotTime || activeOrNextSlotTime || drawInfo?.nextResultTime,
-  )
+  const resultDraw = drawInfo?.latestFinal
+  const resultMap = resultsToMap(resultDraw?.results || [])
+  const resultHeader = formatSlotTime(resultDraw?.slotTime)
+  const nextResultHeader = drawInfo?.nextResultTime || '--'
   const displayCoupons = useMemo(
     () =>
       coupons.map((coupon) => {
@@ -117,12 +110,11 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
 
         return {
           ...coupon,
-          result: isAdmin
-            ? resultMap[couponId] ?? ''
-            : resultMap[couponId] || coupon.result || '',
+          result: resultMap[couponId] || coupon.result || '',
+          incomingResult: pendingResults[couponId] ?? '',
         }
       }),
-    [coupons, isAdmin, resultMap],
+    [coupons, pendingResults, resultMap],
   )
 
   const totals = useMemo(
@@ -233,13 +225,12 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#ef5d88] px-3 py-5 text-slate-950 sm:px-8 lg:px-[38px]">
-      <section className="mx-auto flex max-w-[1180px] flex-col gap-3">
+    <main className="min-h-screen bg-[#ef5d88] px-3 py-5 text-slate-950 sm:px-8 lg:px-[50px]">
+      <section className="mx-auto flex max-w-[1395px] flex-col gap-2">
+        <DrawPanel drawInfo={drawInfo} isAdmin={isAdmin} onSaveResult={saveDrawResult} />
         <PageHeader
           activeType={activeType}
-          canUseAdmin={isAdmin}
           couponTypes={couponTypes}
-          mode={mode}
           onLogout={onLogout}
           onTypeChange={setActiveType}
         />
@@ -255,13 +246,13 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
               {error}
             </div>
           ) : null}
-          <DrawPanel drawInfo={drawInfo} isAdmin={isAdmin} onSaveResult={saveDrawResult} />
           <CouponTable
             coupons={displayCoupons}
             isAdmin={isAdmin}
             numberColumns={numberColumns}
             onCouponFieldChange={updateCouponField}
             onCouponResultChange={updateCouponResult}
+            nextResultHeader={nextResultHeader}
             resultHeader={resultHeader}
           />
           <MobileCouponCards
@@ -270,6 +261,7 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
             numberColumns={numberColumns}
             onCouponFieldChange={updateCouponField}
             onCouponResultChange={updateCouponResult}
+            nextResultHeader={nextResultHeader}
             resultHeader={resultHeader}
           />
           <AuthPanel
@@ -287,6 +279,11 @@ function DashboardLayout({ isAdmin, onLogout, token }) {
           onReportOpen={() => setIsReportOpen(true)}
           totals={totals}
         />
+        <footer className="pt-9 text-center text-sm font-bold sm:text-lg">
+          <p>Reach us info@mail.com</p>
+          <p>Copyright © 2024 www.goldennavratnakuber.com. All rights reserved.</p>
+          <p>Reach us at: 0312-321091</p>
+        </footer>
       </section>
       {isReportOpen ? (
         <ReportModal coupons={coupons} onClose={() => setIsReportOpen(false)} />

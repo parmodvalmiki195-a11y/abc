@@ -4,6 +4,7 @@ function MobileCouponCards({
   coupons,
   isAdmin,
   numberColumns,
+  nextResultHeader,
   onCouponFieldChange,
   onCouponResultChange,
   resultHeader,
@@ -23,22 +24,24 @@ function MobileCouponCards({
               <h2 className="text-lg font-black">{coupon.name}</h2>
               <p className="text-sm font-semibold text-slate-700">Win {coupon.win}</p>
             </div>
-            <div className="rounded bg-white px-4 py-2 text-center text-sm font-black shadow-sm">
+            <div className={`grid gap-2 ${isAdmin ? 'grid-cols-2' : 'grid-cols-1'}`}>
+              <div className="rounded bg-white px-3 py-2 text-center text-sm font-black shadow-sm">
+                <span className="block text-[11px] text-slate-500">{resultHeader}</span>
+                {coupon.result || '--'}
+              </div>
               {isAdmin ? (
-                <EditableValue
-                  isAdmin={isAdmin}
-                  value={coupon.result}
-                  variant="plain"
-                  onChange={(nextValue) =>
-                    onCouponResultChange(couponId, nextValue)
-                  }
-                />
-              ) : (
-                <>
-                  <span className="block text-[11px] text-slate-500">{resultHeader}</span>
-                  {coupon.result}
-                </>
-              )}
+                <div className="rounded border border-[#8aa1c5] bg-[#edf4ff] px-3 py-2 text-center shadow-sm">
+                  <span className="block text-[10px] font-bold uppercase text-slate-500">
+                    Incoming {nextResultHeader}
+                  </span>
+                  <EditableValue
+                    isAdmin
+                    value={coupon.incomingResult}
+                    variant="plain"
+                    onChange={(nextValue) => onCouponResultChange(couponId, nextValue)}
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
 
