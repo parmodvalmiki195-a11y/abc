@@ -81,9 +81,16 @@ function addMinutes(date, minutes) {
 function getCurrentSlot(now = new Date()) {
   const parts = getParts(now)
   const drawDate = toDateString(parts)
+  // const inWindow =
+  //   parts.hour >= START_HOUR &&
+  //   (parts.hour < END_HOUR || (parts.hour === END_HOUR && parts.minute === 0))
+
+
   const inWindow =
     parts.hour >= START_HOUR &&
-    (parts.hour < END_HOUR || (parts.hour === END_HOUR && parts.minute === 0))
+    (parts.hour < END_HOUR ||
+      (parts.hour === END_HOUR && parts.minute < SLOT_MINUTES))
+
 
   if (!inWindow) {
     return { active: false, drawDate, nextSlot: getNextSlot(now) }
@@ -330,11 +337,11 @@ async function prepareIncomingDraw(now = new Date()) {
     result.value
       ? result
       : {
-          couponId: result.couponId,
-          couponName: result.couponName,
-          value: createRandomResult(),
-          source: 'random',
-        },
+        couponId: result.couponId,
+        couponName: result.couponName,
+        value: createRandomResult(),
+        source: 'random',
+      },
   )
   const updatedDraw = await Draw.findByIdAndUpdate(
     currentDraw._id,
