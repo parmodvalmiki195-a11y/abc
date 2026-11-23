@@ -40,7 +40,7 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
       <div className="text-center">
         <p className="text-xl font-bold">Welcome {isAdmin ? 'Admin' : 'Player'}!!</p>
         {/* <h1 className="mt-1 text-4xl font-black text-yellow-300">
-          GOLDERN COUPON BOMBAY
+          GOLDEN COUPON BOMBAY
         </h1> */}
 
         <marquee
@@ -49,7 +49,7 @@ function DrawPanel({ coupons, drawInfo, isAdmin, onIncomingResultChange, onSaveR
           height="100"
           {...{ behavior: 'alternate' }}
           className="outlined">
-          <marquee {...{ behavior: 'alternate' }}><h3 className='text-black'>GOLDERN COUPON BOMBAY</h3></marquee>
+          <marquee {...{ behavior: 'alternate' }}><h3 className='text-black'>GOLDEN COUPON BOMBAY</h3></marquee>
         </marquee>
       </div>
 
